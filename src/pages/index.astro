@@ -1,525 +1,560 @@
 ---
 /*
- * chirag127 / home — index page (hub redesign 2026-07-08).
+ * oriz.in — front door, rebuilt from scratch 2026-08-05 (night-exchange).
  *
- * Sections:
- *   1. Hero / Bio    — name, role, stats, CTA buttons
- *   2. Sites         — all live oriz.in subdomains as cards
- *   3. API fleet     — 16 endpoints as a grid
- *   4. Packages      — 17 @chirag127/* npm packages
+ * THESIS: the hub is a live DEPARTURES BOARD at a night exchange. You do not
+ * arrive to read a bio — you arrive to be routed onward. The page IS the board:
+ * masthead call-sign, one split-flap line that flips to the live destination
+ * count (the single orchestrated motion moment), then boards of departures by
+ * line — Sites, APIs, Packages — each row a track with a call-sign, a
+ * destination, and an ON TIME / LIVE lamp.
  *
- * Design: MD3 dark — #0F0D13 bg, #D0BCFF primary, Google Sans typography.
- * CSS: standalone CSS custom properties, no Tailwind classes.
+ * Deliberately NOT the banned hero (big-name + stat-chips + gradient CTAs).
+ * Numbering is real: rows carry sequential track numbers because the family IS
+ * an enumerable destination set. Boldness spent on the board + beam; the rest
+ * is quiet mono/typeset rows.
  */
 import BaseLayout from '~/layouts/BaseLayout.astro'
 
-/* ── 2 · Sites ───────────────────────────────────────────────────────── */
-const SITES = [
-  {
-    name: 'me.oriz.in',
-    desc: 'Personal OS — lifestream, now-page, uses, CV, contact.',
-    url: 'https://me.oriz.in',
-  },
-  {
-    name: 'blog.oriz.in',
-    desc: 'Long-form essays on engineering, finance, and books.',
-    url: 'https://blog.oriz.in',
-  },
-  {
-    name: 'books.oriz.in',
-    desc: 'Free NCERT textbook directory — class, subject, language.',
-    url: 'https://books.oriz.in',
-  },
-  {
-    name: 'janaushdhi.oriz.in',
-    desc: 'PMBJP generic-medicine catalog — search, compare, locate.',
-    url: 'https://janaushdhi.oriz.in',
-  },
-  {
-    name: 'pkg-md3-tokens.oriz.in',
-    desc: 'MD3 design-system token reference and explorer.',
-    url: 'https://pkg-md3-tokens.oriz.in',
-  },
-  {
-    name: 'pkg-astro-seo.oriz.in',
-    desc: 'Astro SEO component docs and playground.',
-    url: 'https://pkg-astro-seo.oriz.in',
-  },
-  {
-    name: 'pkg-astro-analytics.oriz.in',
-    desc: 'Astro analytics integration docs.',
-    url: 'https://pkg-astro-analytics.oriz.in',
-  },
-  {
-    name: 'pkg-astro-chrome.oriz.in',
-    desc: 'Astro app shell (header, footer, sidebar) docs.',
-    url: 'https://pkg-astro-chrome.oriz.in',
-  },
-  {
-    name: 'pkg-astro-shell.oriz.in',
-    desc: 'Astro shell token system docs.',
-    url: 'https://pkg-astro-shell.oriz.in',
-  },
+interface Row {
+  callsign: string
+  dest: string
+  host: string
+  url: string
+  note: string
+  lamp: 'live' | 'ontime'
+}
+
+const SITES: Row[] = [
+  { callsign: 'ME', dest: 'me', host: 'me.oriz.in', url: 'https://me.oriz.in', note: 'Personal OS — lifestream, now, uses, CV.', lamp: 'live' },
+  { callsign: 'PGS', dest: 'blog', host: 'blog.oriz.in', url: 'https://blog.oriz.in', note: 'Long-form on engineering, finance, books.', lamp: 'ontime' },
+  { callsign: 'NCE', dest: 'books', host: 'books.oriz.in', url: 'https://books.oriz.in', note: 'Free NCERT textbook directory.', lamp: 'ontime' },
+  { callsign: 'LOR', dest: 'lore', host: 'book-lore.oriz.in', url: 'https://book-lore.oriz.in', note: 'Structured book summaries + narration.', lamp: 'ontime' },
+  { callsign: 'JAN', dest: 'janaushdhi', host: 'janaushdhi.oriz.in', url: 'https://janaushdhi.oriz.in', note: 'PMBJP generic-medicine catalog.', lamp: 'ontime' },
+  { callsign: 'RM', dest: 'journal', host: 'journal.oriz.in', url: 'https://journal.oriz.in', note: 'Privacy-first PWA journal.', lamp: 'live' },
+  { callsign: 'PDF', dest: 'pdf-tools', host: 'pdf-tools.oriz.in', url: 'https://pdf-tools.oriz.in', note: 'Browser-side PDF utilities.', lamp: 'ontime' },
+  { callsign: 'IMG', dest: 'image-tools', host: 'image-tools.oriz.in', url: 'https://image-tools.oriz.in', note: 'Browser-side image utilities.', lamp: 'ontime' },
+  { callsign: 'FIN', dest: 'finance', host: 'finance.oriz.in', url: 'https://finance.oriz.in', note: 'SIP, EMI, tax, retirement calculators.', lamp: 'live' },
+  { callsign: 'CRD', dest: 'cards', host: 'financial-cards.oriz.in', url: 'https://financial-cards.oriz.in', note: 'India credit-card intelligence.', lamp: 'ontime' },
 ]
 
-/* ── 3 · API fleet ───────────────────────────────────────────────────── */
-const APIS = [
-  { slug: 'rto', host: 'api-rto.oriz.in', desc: 'RTO vehicle registration data' },
-  {
-    slug: 'constants',
-    host: 'api-constants.oriz.in',
-    desc: 'Indian constants and reference values',
-  },
-  {
-    slug: 'dynasties',
-    host: 'api-dynasties.oriz.in',
-    desc: 'Indian dynasties and historical data',
-  },
-  {
-    slug: 'countries-plus',
-    host: 'api-countries-plus.oriz.in',
-    desc: 'Country data with India-focused extras',
-  },
-  { slug: 'ragas', host: 'api-ragas.oriz.in', desc: 'Hindustani and Carnatic raga database' },
-  { slug: 'air-quality', host: 'api-air-quality.oriz.in', desc: 'Live AQI for Indian cities' },
-  {
-    slug: 'currency-rates',
-    host: 'api-currency-rates.oriz.in',
-    desc: 'Live currency exchange rates',
-  },
-  { slug: 'fii-dii', host: 'api-fii-dii.oriz.in', desc: 'FII and DII daily investment data' },
-  {
-    slug: 'gold-silver',
-    host: 'api-gold-silver.oriz.in',
-    desc: 'Live gold and silver prices (India)',
-  },
-  { slug: 'ifsc', host: 'api-ifsc.oriz.in', desc: 'IFSC code lookup for Indian bank branches' },
-  { slug: 'budget', host: 'api-budget.oriz.in', desc: 'Union Budget allocations and data' },
-  {
-    slug: 'holidays',
-    host: 'api-holidays.oriz.in',
-    desc: 'Indian public holidays by state and year',
-  },
-  {
-    slug: 'petrol-diesel',
-    host: 'api-petrol-diesel.oriz.in',
-    desc: 'Daily petrol and diesel prices by city',
-  },
-  {
-    slug: 'train-schedules',
-    host: 'api-train-schedules.oriz.in',
-    desc: 'Indian Railways train schedules',
-  },
-  { slug: 'weather', host: 'api-weather.oriz.in', desc: 'Current weather for Indian cities' },
-  {
-    slug: 'mmi-tickertape',
-    host: 'api-mmi-tickertape.oriz.in',
-    desc: 'Market Mood Index and Tickertape data',
-  },
+const APIS: Row[] = [
+  { callsign: 'RTO', dest: 'rto', host: 'api-rto.oriz.in', url: 'https://api-rto.oriz.in', note: 'RTO vehicle registration data.', lamp: 'live' },
+  { callsign: 'CON', dest: 'constants', host: 'api-constants.oriz.in', url: 'https://api-constants.oriz.in', note: 'Indian constants + reference values.', lamp: 'ontime' },
+  { callsign: 'DYN', dest: 'dynasties', host: 'api-dynasties.oriz.in', url: 'https://api-dynasties.oriz.in', note: 'Indian dynasties + historical data.', lamp: 'ontime' },
+  { callsign: 'CP', dest: 'countries+', host: 'api-countries-plus.oriz.in', url: 'https://api-countries-plus.oriz.in', note: 'Country data, India-focused extras.', lamp: 'ontime' },
+  { callsign: 'RAG', dest: 'ragas', host: 'api-ragas.oriz.in', url: 'https://api-ragas.oriz.in', note: 'Hindustani + Carnatic raga database.', lamp: 'ontime' },
+  { callsign: 'AQI', dest: 'air-quality', host: 'api-air-quality.oriz.in', url: 'https://api-air-quality.oriz.in', note: 'Live AQI for Indian cities.', lamp: 'live' },
+  { callsign: 'FX', dest: 'currency', host: 'api-currency-rates.oriz.in', url: 'https://api-currency-rates.oriz.in', note: 'Live currency exchange rates.', lamp: 'live' },
+  { callsign: 'FLW', dest: 'fii-dii', host: 'api-fii-dii.oriz.in', url: 'https://api-fii-dii.oriz.in', note: 'FII + DII daily investment flows.', lamp: 'live' },
+  { callsign: 'AU', dest: 'gold-silver', host: 'api-gold-silver.oriz.in', url: 'https://api-gold-silver.oriz.in', note: 'Live gold + silver prices (India).', lamp: 'live' },
+  { callsign: 'FSC', dest: 'ifsc', host: 'api-ifsc.oriz.in', url: 'https://api-ifsc.oriz.in', note: 'IFSC lookup for bank branches.', lamp: 'ontime' },
+  { callsign: 'BUD', dest: 'budget', host: 'api-budget.oriz.in', url: 'https://api-budget.oriz.in', note: 'Union Budget allocations.', lamp: 'ontime' },
+  { callsign: 'HOL', dest: 'holidays', host: 'api-holidays.oriz.in', url: 'https://api-holidays.oriz.in', note: 'Public holidays by state + year.', lamp: 'ontime' },
+  { callsign: 'PD', dest: 'petrol-diesel', host: 'api-petrol-diesel.oriz.in', url: 'https://api-petrol-diesel.oriz.in', note: 'Daily petrol + diesel by city.', lamp: 'live' },
+  { callsign: 'TRN', dest: 'train-sched', host: 'api-train-schedules.oriz.in', url: 'https://api-train-schedules.oriz.in', note: 'Indian Railways schedules.', lamp: 'ontime' },
+  { callsign: 'WX', dest: 'weather', host: 'api-weather.oriz.in', url: 'https://api-weather.oriz.in', note: 'Current weather for Indian cities.', lamp: 'live' },
+  { callsign: 'MMI', dest: 'mmi', host: 'api-mmi-tickertape.oriz.in', url: 'https://api-mmi-tickertape.oriz.in', note: 'Market Mood Index + Tickertape.', lamp: 'live' },
 ]
 
-/* ── 4 · Packages ─────────────────────────────────────────────────────
- * 17 @chirag127/* npm packages with pkg-*.oriz.in landing pages.
- * ─────────────────────────────────────────────────────────────────── */
-const PACKAGES = [
-  { slug: 'md3-tokens', pkgSite: 'pkg-md3-tokens.oriz.in' },
-  { slug: 'astro-seo', pkgSite: 'pkg-astro-seo.oriz.in' },
-  { slug: 'astro-analytics', pkgSite: 'pkg-astro-analytics.oriz.in' },
-  { slug: 'astro-chrome', pkgSite: 'pkg-astro-chrome.oriz.in' },
-  { slug: 'astro-shell', pkgSite: 'pkg-astro-shell.oriz.in' },
-  { slug: 'astro-billing', pkgSite: 'pkg-astro-billing.oriz.in' },
-  { slug: 'astro-content', pkgSite: 'pkg-astro-content.oriz.in' },
-  { slug: 'astro-data', pkgSite: 'pkg-astro-data.oriz.in' },
-  { slug: 'astro-forms', pkgSite: 'pkg-astro-forms.oriz.in' },
-  { slug: 'astro-pwa', pkgSite: 'pkg-astro-pwa.oriz.in' },
-  { slug: 'astro-tools', pkgSite: 'pkg-astro-tools.oriz.in' },
-  { slug: 'astro-widgets', pkgSite: 'pkg-astro-widgets.oriz.in' },
-  { slug: 'auth-core', pkgSite: 'pkg-auth-core.oriz.in' },
-  { slug: 'omni-publish', pkgSite: 'pkg-omni-publish.oriz.in' },
-  { slug: 'ai-providers', pkgSite: 'pkg-ai-providers.oriz.in' },
-  { slug: 'seo', pkgSite: 'pkg-seo.oriz.in' },
-  { slug: 'rate-limit', pkgSite: 'pkg-rate-limit.oriz.in' },
+const PKG_SLUGS = [
+  'md3-tokens', 'astro-seo', 'astro-analytics', 'astro-chrome', 'astro-shell',
+  'astro-billing', 'astro-content', 'astro-data', 'astro-forms', 'astro-pwa',
+  'astro-tools', 'astro-widgets', 'auth-core', 'omni-publish', 'ai-providers',
+  'seo', 'rate-limit',
+]
+
+const totalDest = SITES.length + APIS.length + PKG_SLUGS.length
+const liveNow = [...SITES, ...APIS].filter((r) => r.lamp === 'live').length
+
+const boards: { code: string; line: string; label: string; rows: Row[] }[] = [
+  { code: 'A', line: 'sites', label: 'Sites', rows: SITES },
+  { code: 'B', line: 'apis', label: 'API fleet', rows: APIS },
 ]
 ---
 
 <BaseLayout
-  title="Chirag Singhal — Software Engineer, oriz.in"
-  description="Chirag Singhal — Software Engineer at TCS. 353+ repos, 192+ tools, open-source packages and free APIs."
+  title="oriz.in — the exchange · route to every free app, tool, book & API"
+  description="oriz.in is the front door to a free-forever family of small web apps, tools, content sites, books and open-source packages by Chirag Singhal. Pick a destination."
   sidebar={false}
 >
-  <article class="hub spine">
+  <div class="exchange">
 
-    {/* ── 1 · Hero / Bio ──────────────────────────────────────────────── */}
-    <section class="hero" aria-label="Bio">
-      <div class="hero-inner">
-        <p class="hero-eyebrow">Software Engineer</p>
-        <h1 class="hero-name">Chirag Singhal</h1>
-        <p class="hero-role">@ TCS &middot; Available for opportunities</p>
-        <ul class="hero-stats" aria-label="Stats">
-          <li class="stat-chip"><span class="stat-n">353+</span><span class="stat-l">repos</span></li>
-          <li class="stat-chip"><span class="stat-n">53h</span><span class="stat-l">/week coding</span></li>
-          <li class="stat-chip"><span class="stat-n">192+</span><span class="stat-l">tools</span></li>
-          <li class="stat-chip"><span class="stat-n">16</span><span class="stat-l">free APIs</span></li>
-        </ul>
-        <div class="hero-ctas">
-          <a class="cta-primary" href="https://me.oriz.in">me.oriz.in &rarr;</a>
-          <a class="cta-secondary" href="https://github.com/chirag127">github.com/chirag127 &rarr;</a>
-        </div>
+    <header class="board-head spine" aria-label="Exchange">
+      <p class="bh-eyebrow"><span class="bh-lamp" aria-hidden="true"></span>Now boarding · night exchange</p>
+
+      <div class="bh-flap">
+        <span class="bh-flap-label">Destinations live</span>
+        <span class="bh-flap-count" data-flip data-target={totalDest} aria-label={`${totalDest} destinations`}>00</span>
+        <span class="bh-flap-sub">{liveNow} updating in real time</span>
+      </div>
+
+      <h1 class="bh-title">One board. <span class="bh-em">Every</span> destination.</h1>
+      <p class="bh-lede">
+        oriz.in routes onward to a free-forever family — apps, tools, books, live data APIs
+        and open packages. Read the board, pick a line, depart. Nothing here is gated.
+      </p>
+
+      <a class="bh-depart" href="#board-a">
+        <span>Read the board</span>
+        <span class="bh-depart-beam" aria-hidden="true"></span>
+      </a>
+    </header>
+
+    {boards.map((b) => (
+      <section class="board spine" id={`board-${b.code.toLowerCase()}`} aria-label={b.label}>
+        <header class="board-strip">
+          <span class="bs-line" data-line={b.line}>Line {b.code}</span>
+          <h2 class="bs-label">{b.label}</h2>
+          <span class="bs-count">{String(b.rows.length).padStart(2, '0')} destinations</span>
+        </header>
+
+        <ol class="deps" role="list">
+          {b.rows.map((r, i) => (
+            <li class="dep-row" data-lamp={r.lamp}>
+              <a class="dep" href={r.url}>
+                <span class="dep-no">{String(i + 1).padStart(2, '0')}</span>
+                <span class="dep-cs" aria-hidden="true">{r.callsign}</span>
+                <span class="dep-body">
+                  <span class="dep-dest">{r.dest}</span>
+                  <span class="dep-note">{r.note}</span>
+                </span>
+                <span class="dep-host">{r.host}</span>
+                <span class="dep-lamp" aria-hidden="true">
+                  <span class="dep-dot"></span>{r.lamp === 'live' ? 'LIVE' : 'ON TIME'}
+                </span>
+                <span class="dep-go" aria-hidden="true">&#8599;</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </section>
+    ))}
+
+    <section class="board spine" id="board-c" aria-label="Packages">
+      <header class="board-strip">
+        <span class="bs-line" data-line="packages">Line C</span>
+        <h2 class="bs-label">npm packages</h2>
+        <span class="bs-count">@chirag127 · {String(PKG_SLUGS.length).padStart(2, '0')}</span>
+      </header>
+      <ul class="pk-strip" role="list">
+        {PKG_SLUGS.map((slug) => (
+          <li>
+            <a class="pk" href={`https://npm.im/@chirag127/${slug}`}>
+              <span class="pk-ns">@chirag127/</span><span class="pk-name">{slug}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="concourse spine" aria-label="About the exchange">
+      <p class="cc-copy">
+        Built + run by <a href="https://me.oriz.in">Chirag Singhal</a> — one operator,
+        {totalDest} public destinations, no ads, no paywalls, no card on file.
+      </p>
+      <div class="cc-links">
+        <a href="https://github.com/chirag127">github.com/chirag127</a>
+        <a href="/about/">About</a>
+        <a href="/sites/">Full index</a>
       </div>
     </section>
 
-    {/* ── 2 · Sites directory ─────────────────────────────────────────── */}
-    <section class="block" id="sites">
-      <header class="block-h">
-        <h2>Sites</h2>
-      </header>
-      <ul class="sites-grid">
-        {SITES.map((s) => (
-          <li>
-            <a class="site-card" href={s.url}>
-              <span class="site-name">{s.name}</span>
-              <span class="site-desc">{s.desc}</span>
-              <span class="site-open">Open &nearr;</span>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </section>
-
-    {/* ── 3 · API fleet ───────────────────────────────────────────────── */}
-    <section class="block" id="apis">
-      <header class="block-h">
-        <h2>API fleet</h2>
-        <span class="block-count">16 endpoints</span>
-      </header>
-      <ul class="api-grid">
-        {APIS.map((a) => (
-          <li>
-            <a class="api-card" href={`https://${a.host}`}>
-              <span class="api-slug">{a.slug}</span>
-              <span class="api-host">{a.host}</span>
-              <span class="api-desc">{a.desc}</span>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </section>
-
-    {/* ── 4 · Packages ────────────────────────────────────────────────── */}
-    <section class="block" id="packages">
-      <header class="block-h">
-        <h2>npm packages</h2>
-        <span class="block-count">@chirag127 &middot; 17 packages</span>
-      </header>
-      <ul class="pkg-grid">
-        {PACKAGES.map((p) => (
-          <li>
-            <a class="pkg-card" href={`https://npm.im/@chirag127/${p.slug}`}>
-              <span class="pkg-name">@chirag127/{p.slug}</span>
-              <span class="pkg-site">{p.pkgSite}</span>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </section>
-
-  </article>
+  </div>
 </BaseLayout>
 
 <style>
-  /* ── Layout ──────────────────────────────────────────────────────── */
-  .hub {
-    padding-block: clamp(2rem, 6vw, 4rem) clamp(3rem, 8vw, 6rem);
-  }
+  .exchange { padding-bottom: clamp(3rem, 8vw, 6rem); }
 
-  /* ── 1 · Hero ────────────────────────────────────────────────────── */
-  .hero {
-    padding-block: clamp(3rem, 10vw, 6rem) clamp(2.5rem, 7vw, 4rem);
-    border-bottom: 1px solid var(--md-outline-variant);
-    margin-bottom: clamp(2.5rem, 6vw, 4rem);
+  /* ── MASTHEAD ─────────────────────────────────────────────────────── */
+  .board-head {
+    padding-block: clamp(3rem, 9vw, 6.5rem) clamp(2.5rem, 6vw, 4rem);
+    position: relative;
   }
-  .hero-inner {
-    max-width: 44rem;
-  }
-  .hero-eyebrow {
-    font-family: var(--md-font-mono);
+  .bh-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+    font-family: var(--font-mono);
     font-size: 0.6875rem;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--md-primary);
-    margin: 0 0 0.75rem;
+    color: var(--ink-mute);
+    margin: 0 0 clamp(1.5rem, 4vw, 2.25rem);
   }
-  .hero-name {
-    font-family: var(--md-font-display);
-    font-size: clamp(2.75rem, 8vw, 5rem);
-    font-weight: 700;
-    line-height: 1;
-    letter-spacing: -0.025em;
-    color: var(--md-on-surface);
-    margin: 0 0 0.5rem;
+  .bh-lamp {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--oz-amber);
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--oz-amber) 70%, transparent);
+    animation: lamp-pulse 2.4s ease-out infinite;
   }
-  .hero-role {
-    font-family: var(--md-font-body);
-    font-size: clamp(1rem, 2.5vw, 1.25rem);
-    color: var(--md-on-surface-variant);
-    margin: 0 0 clamp(1.5rem, 4vw, 2rem);
+  @keyframes lamp-pulse {
+    0%   { box-shadow: 0 0 0 0 color-mix(in oklab, var(--oz-amber) 70%, transparent); }
+    70%  { box-shadow: 0 0 0 8px color-mix(in oklab, var(--oz-amber) 0%, transparent); }
+    100% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--oz-amber) 0%, transparent); }
   }
 
-  /* Stats chips */
-  .hero-stats {
-    list-style: none;
-    padding: 0;
+  /* Split-flap count — signature motion moment. */
+  .bh-flap {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
+    align-items: center;
+    column-gap: 1.25rem;
+    margin-bottom: clamp(1.75rem, 5vw, 2.75rem);
+    width: max-content;
+    max-width: 100%;
+  }
+  .bh-flap-label {
+    grid-column: 1; grid-row: 1;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    align-self: end;
+    padding-bottom: 0.5rem;
+  }
+  .bh-flap-count {
+    grid-column: 1; grid-row: 2;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    font-size: clamp(3.5rem, 13vw, 6.5rem);
+    line-height: 0.86;
+    color: var(--oz-halo);
+    background: linear-gradient(180deg, var(--oz-night-3), var(--oz-night-2));
+    border: 1px solid var(--oz-line);
+    border-radius: var(--md-shape-md);
+    padding: 0.12em 0.28em 0.16em;
+    position: relative;
+    box-shadow: inset 0 -6px 12px rgba(0,0,0,0.35), 0 0 24px color-mix(in oklab, var(--oz-beam) 12%, transparent);
+  }
+  .bh-flap-count::after {
+    content: '';
+    position: absolute;
+    left: 0.28em; right: 0.28em;
+    top: 50%;
+    height: 2px;
+    transform: translateY(-1px);
+    background: var(--oz-night);
+    opacity: 0.75;
+  }
+  .bh-flap-sub {
+    grid-column: 2; grid-row: 2;
+    align-self: center;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    color: var(--oz-amber);
+    max-width: 12ch;
+    line-height: 1.35;
+  }
+
+  .bh-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.5rem, 7.5vw, 5.25rem);
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+    color: var(--oz-halo);
+    margin: 0 0 clamp(1rem, 3vw, 1.5rem);
+    max-width: 16ch;
+  }
+  .bh-em { color: var(--oz-beam); position: relative; }
+  .bh-em::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    bottom: 0.06em;
+    height: max(3px, 0.08em);
+    background: linear-gradient(90deg, var(--oz-beam), var(--oz-amber));
+    border-radius: 999px;
+    box-shadow: 0 0 10px color-mix(in oklab, var(--oz-beam) 55%, transparent);
+  }
+  .bh-lede {
+    font-family: var(--font-body);
+    font-size: clamp(1rem, 2.2vw, 1.1875rem);
+    line-height: 1.6;
+    color: var(--ink-mute);
+    max-width: 54ch;
     margin: 0 0 clamp(1.75rem, 4vw, 2.5rem);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.625rem;
   }
-  .stat-chip {
-    display: flex;
+  .bh-depart {
+    display: inline-flex;
     flex-direction: column;
-    align-items: center;
-    gap: 0.125rem;
-    padding: 0.625rem 1.125rem;
-    background: var(--md-surface-container-high);
-    border-radius: var(--md-shape-lg);
-    min-width: 5rem;
-  }
-  .stat-n {
-    font-family: var(--md-font-display);
-    font-size: 1.375rem;
-    font-weight: 700;
-    color: var(--md-primary);
-    line-height: 1;
-  }
-  .stat-l {
-    font-family: var(--md-font-mono);
-    font-size: 0.6rem;
-    letter-spacing: 0.12em;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--md-on-surface-variant);
+    color: var(--oz-halo);
+    text-decoration: none;
+    width: max-content;
   }
+  .bh-depart-beam {
+    height: 2px; width: 100%;
+    background: var(--oz-line);
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+  }
+  .bh-depart-beam::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, var(--oz-beam), var(--oz-amber));
+    transform: translateX(-100%);
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .bh-depart:hover .bh-depart-beam::after,
+  .bh-depart:focus-visible .bh-depart-beam::after { transform: translateX(0); }
+  .bh-depart:focus-visible { outline: 2px solid var(--oz-beam); outline-offset: 4px; border-radius: 4px; }
 
-  /* CTA buttons */
-  .hero-ctas {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-  }
-  .cta-primary {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.75rem 1.5rem;
-    background: var(--md-primary);
-    color: var(--md-on-primary);
-    border-radius: var(--md-shape-full);
-    font-family: var(--md-font-body);
-    font-weight: 500;
-    font-size: 0.9375rem;
-    text-decoration: none;
-    transition: opacity 0.15s;
-  }
-  .cta-primary:hover {
-    opacity: 0.88;
-    text-decoration: none;
-  }
-  .cta-secondary {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.75rem 1.5rem;
-    background: transparent;
-    color: var(--md-primary);
-    border: 1px solid var(--md-outline-variant);
-    border-radius: var(--md-shape-full);
-    font-family: var(--md-font-body);
-    font-weight: 500;
-    font-size: 0.9375rem;
-    text-decoration: none;
-    transition: background 0.15s, border-color 0.15s;
-  }
-  .cta-secondary:hover {
-    background: var(--md-surface-container-high);
-    border-color: var(--md-primary);
-    text-decoration: none;
-  }
-
-  /* ── Section scaffold ────────────────────────────────────────────── */
-  .block {
-    margin-block: clamp(2.5rem, 6vw, 4rem);
-  }
-  .block-h {
+  /* ── BOARD SECTIONS ───────────────────────────────────────────────── */
+  .board { margin-top: clamp(2.5rem, 6vw, 4rem); }
+  .board-strip {
     display: flex;
     align-items: baseline;
-    justify-content: space-between;
     gap: 1rem;
-    margin: 0 0 clamp(1rem, 2.5vw, 1.5rem);
-    padding-bottom: 0.625rem;
-    border-bottom: 1px solid var(--md-outline-variant);
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--oz-line);
+    margin-bottom: 0.25rem;
   }
-  .block-h h2 {
-    font-family: var(--md-font-display);
-    font-size: clamp(1.375rem, 3vw, 1.875rem);
-    font-weight: 600;
-    margin: 0;
-    color: var(--md-on-surface);
-    letter-spacing: -0.015em;
-  }
-  .block-count {
-    font-family: var(--md-font-mono);
+  .bs-line {
+    font-family: var(--font-mono);
     font-size: 0.6875rem;
-    letter-spacing: 0.1em;
+    font-weight: 700;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--md-on-surface-variant);
+    color: var(--oz-night);
+    background: var(--oz-beam);
+    padding: 0.28em 0.6em;
+    border-radius: var(--md-shape-xs);
+  }
+  .bs-line[data-line='apis'] { background: var(--oz-amber); }
+  .bs-line[data-line='packages'] { background: var(--oz-rose); }
+  .bs-label {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    letter-spacing: -0.015em;
+    color: var(--oz-halo);
+    margin: 0;
+    margin-right: auto;
+  }
+  .bs-count {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
     white-space: nowrap;
   }
 
-  /* ── 2 · Sites grid ──────────────────────────────────────────────── */
-  .sites-grid {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  .deps { list-style: none; margin: 0; padding: 0; }
+  .dep-row + .dep-row { border-top: 1px solid color-mix(in oklab, var(--oz-line) 55%, transparent); }
+  .dep {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 0.75rem;
-  }
-  .site-card {
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    gap: 0.375rem;
-    padding: 1.125rem 1.25rem;
-    background: var(--md-surface-container-high);
-    border-radius: var(--md-shape-lg);
+    grid-template-columns: 2.5rem 3.25rem 1fr auto auto 1.25rem;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.9rem 0.5rem;
     text-decoration: none;
-    transition: background 0.15s, transform 0.15s;
+    color: inherit;
+    position: relative;
+    transition: background 0.16s;
   }
-  .site-card:hover {
-    background: var(--md-surface-container-highest);
-    transform: translateY(-2px);
-    text-decoration: none;
+  .dep::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: transparent;
+    transition: background 0.16s;
   }
-  .site-name {
-    font-family: var(--md-font-body);
-    font-weight: 600;
-    font-size: 0.9375rem;
-    color: var(--md-primary);
-    word-break: break-all;
+  .dep:hover, .dep:focus-visible { background: var(--oz-night-2); outline: none; }
+  .dep:hover::before, .dep:focus-visible::before {
+    background: linear-gradient(180deg, var(--oz-beam), var(--oz-amber));
   }
-  .site-desc {
-    font-family: var(--md-font-body);
-    font-size: 0.875rem;
-    line-height: 1.5;
-    color: var(--md-on-surface-variant);
+  .dep:focus-visible { box-shadow: inset 0 0 0 1px var(--oz-beam); border-radius: var(--md-shape-sm); }
+  .dep-no {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--ink-mute);
+    font-variant-numeric: tabular-nums;
   }
-  .site-open {
-    font-family: var(--md-font-mono);
-    font-size: 0.6875rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--md-primary);
-    margin-top: 0.25rem;
-  }
-
-  /* ── 3 · API grid ────────────────────────────────────────────────── */
-  .api-grid {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 0.75rem;
-  }
-  .api-card {
-    display: grid;
-    grid-template-rows: auto auto 1fr;
-    gap: 0.25rem;
-    padding: 1rem 1.125rem;
-    background: var(--md-surface-container);
-    border-radius: var(--md-shape-md);
-    border: 1px solid var(--md-outline-variant);
-    text-decoration: none;
-    transition: border-color 0.15s, background 0.15s;
-  }
-  .api-card:hover {
-    border-color: var(--md-primary);
-    background: var(--md-surface-container-high);
-    text-decoration: none;
-  }
-  .api-slug {
-    font-family: var(--md-font-display);
-    font-weight: 600;
-    font-size: 1rem;
-    color: var(--md-on-surface);
-  }
-  .api-host {
-    font-family: var(--md-font-mono);
-    font-size: 0.6875rem;
-    color: var(--md-primary);
-    letter-spacing: 0.02em;
-  }
-  .api-desc {
-    font-family: var(--md-font-body);
+  .dep-cs {
+    font-family: var(--font-mono);
+    font-weight: 700;
     font-size: 0.8125rem;
-    line-height: 1.45;
-    color: var(--md-on-surface-variant);
-    margin-top: 0.375rem;
+    letter-spacing: 0.04em;
+    color: var(--oz-halo);
+    background: var(--oz-night-3);
+    border: 1px solid var(--oz-line);
+    border-radius: var(--md-shape-xs);
+    padding: 0.3em 0;
+    text-align: center;
   }
-
-  /* ── 4 · Packages grid ───────────────────────────────────────────── */
-  .pkg-grid {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 0.625rem;
+  .dep-body { min-width: 0; }
+  .dep-dest {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.0625rem;
+    color: var(--oz-halo);
+    letter-spacing: -0.01em;
   }
-  .pkg-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: 0.875rem 1rem;
-    background: var(--md-surface-container);
-    border-radius: var(--md-shape-md);
-    text-decoration: none;
-    transition: background 0.15s;
-  }
-  .pkg-card:hover {
-    background: var(--md-surface-container-high);
-    text-decoration: none;
-  }
-  .pkg-name {
-    font-family: var(--md-font-mono);
+  .dep:hover .dep-dest, .dep:focus-visible .dep-dest { color: var(--oz-beam); }
+  .dep-note {
+    display: block;
+    font-family: var(--font-body);
     font-size: 0.8125rem;
-    color: var(--md-on-surface);
-    font-weight: 500;
+    color: var(--ink-mute);
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
-  .pkg-site {
-    font-family: var(--md-font-mono);
+  .dep-host {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--ink-mute);
+    white-space: nowrap;
+  }
+  .dep-lamp {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    font-family: var(--font-mono);
     font-size: 0.625rem;
-    color: var(--md-primary);
-    letter-spacing: 0.02em;
+    letter-spacing: 0.14em;
+    color: var(--ink-mute);
+    white-space: nowrap;
+  }
+  .dep-dot { width: 6px; height: 6px; border-radius: 999px; background: var(--ink-mute); }
+  .dep-row[data-lamp='live'] .dep-dot {
+    background: var(--oz-amber);
+    box-shadow: 0 0 6px var(--oz-amber);
+    animation: lamp-pulse 2.4s ease-out infinite;
+  }
+  .dep-row[data-lamp='live'] .dep-lamp { color: var(--oz-amber); }
+  .dep-row[data-lamp='ontime'] .dep-dot { background: var(--oz-beam); }
+  .dep-go {
+    font-family: var(--font-mono);
+    color: var(--ink-mute);
+    text-align: right;
+    transition: transform 0.16s, color 0.16s;
+  }
+  .dep:hover .dep-go, .dep:focus-visible .dep-go { color: var(--oz-beam); transform: translate(2px, -2px); }
+
+  /* ── PACKAGES STRIP ───────────────────────────────────────────────── */
+  .pk-strip {
+    list-style: none;
+    margin: 0.75rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .pk {
+    display: inline-flex;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-decoration: none;
+    padding: 0.5em 0.85em;
+    border: 1px solid var(--oz-line);
+    border-radius: var(--md-shape-full);
+    background: var(--oz-night-2);
+    transition: border-color 0.16s, background 0.16s;
+  }
+  .pk-ns { color: var(--ink-mute); }
+  .pk-name { color: var(--oz-halo); }
+  .pk:hover, .pk:focus-visible { border-color: var(--oz-rose); background: var(--oz-night-3); outline: none; }
+  .pk:hover .pk-name, .pk:focus-visible .pk-name { color: var(--oz-rose); }
+  .pk:focus-visible { box-shadow: 0 0 0 2px color-mix(in oklab, var(--oz-rose) 50%, transparent); }
+
+  /* ── CONCOURSE ────────────────────────────────────────────────────── */
+  .concourse {
+    margin-top: clamp(3rem, 7vw, 5rem);
+    padding-top: clamp(1.5rem, 4vw, 2rem);
+    border-top: 1px solid var(--oz-line);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .cc-copy {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    color: var(--ink-mute);
+    margin: 0;
+    max-width: 52ch;
+  }
+  .cc-copy a { color: var(--oz-beam); }
+  .cc-links { display: flex; gap: 1.25rem; }
+  .cc-links a {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-mute);
+    text-decoration: none;
+  }
+  .cc-links a:hover, .cc-links a:focus-visible { color: var(--oz-halo); }
+
+  /* ── RESPONSIVE ───────────────────────────────────────────────────── */
+  @media (max-width: 760px) {
+    .dep {
+      grid-template-columns: 2rem 2.75rem 1fr auto;
+      gap: 0.7rem;
+      row-gap: 0.35rem;
+    }
+    .dep-host { display: none; }
+    .dep-lamp { grid-column: 3 / 5; justify-content: flex-start; }
+    .dep-note { white-space: normal; }
+  }
+  @media (max-width: 460px) {
+    .bh-flap { grid-template-columns: 1fr; }
+    .bh-flap-sub { grid-column: 1; grid-row: 3; max-width: none; margin-top: 0.5rem; }
   }
 
-  /* ── Responsive ──────────────────────────────────────────────────── */
-  @media (max-width: 600px) {
-    .hero-stats {
-      gap: 0.5rem;
-    }
-    .stat-chip {
-      padding: 0.5rem 0.875rem;
-      min-width: 4rem;
-    }
-    .api-grid,
-    .pkg-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  @media (max-width: 400px) {
-    .api-grid,
-    .pkg-grid {
-      grid-template-columns: 1fr;
-    }
-    .hero-ctas {
-      flex-direction: column;
-    }
+  /* ── REDUCED MOTION ───────────────────────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .bh-lamp, .dep-row[data-lamp='live'] .dep-dot { animation: none; }
+    .bh-depart-beam::after { transition: none; }
+    .dep-go { transition: none; }
   }
 </style>
+
+<script>
+  /* Split-flap count-up — the one orchestrated motion moment. Honors
+     prefers-reduced-motion (snaps to target). */
+  const el = document.querySelector<HTMLElement>('[data-flip]')
+  if (el) {
+    const target = Number(el.dataset.target ?? '0')
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduce || target <= 0) {
+      el.textContent = String(target).padStart(2, '0')
+    } else {
+      const run = () => {
+        const dur = 1100
+        const t0 = performance.now()
+        const tick = (now: number) => {
+          const p = Math.min(1, (now - t0) / dur)
+          const eased = 1 - (1 - p) ** 3
+          const val = p < 1 ? Math.floor(eased * target + (1 - eased) * (Math.random() * target)) : target
+          el.textContent = String(Math.min(target, val)).padStart(2, '0')
+          if (p < 1) requestAnimationFrame(tick)
+          else el.textContent = String(target).padStart(2, '0')
+        }
+        requestAnimationFrame(tick)
+      }
+      const io = new IntersectionObserver((entries, obs) => {
+        for (const e of entries) if (e.isIntersecting) { run(); obs.disconnect() }
+      }, { threshold: 0.4 })
+      io.observe(el)
+    }
+  }
+</script>

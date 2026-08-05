@@ -1,31 +1,36 @@
 ---
 /*
- * Header — v0 locked design 2026-06-22.
+ * Header — night-exchange chrome (2026-08-05 redesign).
  *
- * Sticky paper background w/ vermilion underline accent. Wordmark "oriz"
- * (Fraunces). Nav: Apps · Tools · Books · Packages · About. Support chip
- * on the right. Mobile: nav collapses; hamburger toggles the family
- * sidebar drawer.
+ * A sticky "control strip": the oriz.in call-sign wordmark on the left, a
+ * mono routing nav in the center, and the Clerk AuthDock on the right (public-
+ * first — signed-out shows an optional Sign in). A hairline beam sits under
+ * the whole strip. Mobile collapses nav to the family drawer via the burger.
  */
+import Wordmark from '~/components/Wordmark.astro'
+import { FAMILY_SITES } from '~/lib/family'
+import AuthDock from '~/components/AuthDock.tsx'
+
+const dockSites = FAMILY_SITES.filter((s) => s.slug !== 'home').map((s) => ({
+  slug: s.slug,
+  name: s.name,
+  url: s.url,
+}))
 ---
 
 <header class="hdr">
   <div class="spine hdr-row">
-    <a class="hdr-wm" href="/" aria-label="oriz home">
-      <span class="hdr-wm-letter">o</span><span class="hdr-wm-letter">r</span><span
-        class="hdr-wm-letter">i</span><span class="hdr-wm-letter hdr-wm-z">z</span>
-    </a>
+    <Wordmark size={22} href="https://oriz.in" />
 
     <nav class="hdr-nav" aria-label="Primary">
-      <a href="/apps/">Apps</a>
-      <a href="/tools/">Tools</a>
-      <a href="/books/">Books</a>
-      <a href="/packages/">Packages</a>
-      <a href="/about/">About</a>
+      <a href="/#board-a"><span class="hdr-dot" aria-hidden="true"></span>Sites</a>
+      <a href="/#board-b"><span class="hdr-dot" aria-hidden="true"></span>APIs</a>
+      <a href="/#board-c"><span class="hdr-dot" aria-hidden="true"></span>Packages</a>
+      <a href="/about/"><span class="hdr-dot" aria-hidden="true"></span>About</a>
     </nav>
 
     <div class="hdr-right">
-      <a href="/support/" class="hdr-signin">Support</a>
+      <AuthDock client:only="react" sites={dockSites} />
       <button
         class="hdr-burger"
         type="button"
@@ -33,7 +38,8 @@
         aria-expanded="false"
         data-hdr-burger
       >
-        <span aria-hidden="true">☰</span>
+        <span class="hdr-burger-bar" aria-hidden="true"></span>
+        <span class="hdr-burger-bar" aria-hidden="true"></span>
       </button>
     </div>
   </div>
@@ -44,121 +50,121 @@
     position: sticky;
     top: 0;
     z-index: 40;
-    background: color-mix(in oklab, var(--color-bg) 92%, transparent);
-    backdrop-filter: saturate(140%) blur(8px);
-    -webkit-backdrop-filter: saturate(140%) blur(8px);
-    border-bottom: 1px solid var(--color-border);
+    background: color-mix(in oklab, var(--oz-night) 88%, transparent);
+    backdrop-filter: saturate(160%) blur(10px);
+    -webkit-backdrop-filter: saturate(160%) blur(10px);
+    border-bottom: 1px solid var(--oz-line);
+  }
+  .hdr::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklab, var(--oz-beam) 55%, transparent) 30%,
+      color-mix(in oklab, var(--oz-amber) 55%, transparent) 70%,
+      transparent
+    );
+    opacity: 0.7;
+    pointer-events: none;
   }
   .hdr-row {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    height: 64px;
-  }
-  .hdr-wm {
-    font-family: var(--font-display);
-    font-size: 1.5rem;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    line-height: 1;
-    color: var(--color-fg);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: baseline;
-    padding-block: 0.25rem;
-    border-bottom: 2px solid transparent;
-    transition: border-color 0.18s;
-  }
-  .hdr-wm:hover {
-    border-bottom-color: var(--color-accent);
-  }
-  .hdr-wm-letter {
-    display: inline-block;
-  }
-  .hdr-wm-z {
-    color: var(--color-accent);
+    gap: 1.25rem;
+    height: 60px;
   }
 
   .hdr-nav {
     display: flex;
-    gap: 1.25rem;
-    margin-left: 1rem;
+    gap: 1.5rem;
+    margin-left: 1.25rem;
   }
   .hdr-nav a {
-    font-family: var(--font-body);
-    font-size: 0.9375rem;
-    color: var(--color-fg);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    letter-spacing: 0.02em;
+    color: var(--ink-mute);
     text-decoration: none;
-    padding-block: 0.25rem;
-    border-bottom: 2px solid transparent;
-    transition: border-color 0.18s, color 0.18s;
+    transition: color 0.18s;
+  }
+  .hdr-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 999px;
+    background: var(--oz-line);
+    transition: background 0.18s, box-shadow 0.18s;
   }
   .hdr-nav a:hover,
   .hdr-nav a:focus-visible {
-    color: var(--color-accent);
-    border-bottom-color: var(--color-accent);
+    color: var(--ink);
     outline: none;
+  }
+  .hdr-nav a:hover .hdr-dot,
+  .hdr-nav a:focus-visible .hdr-dot {
+    background: var(--oz-beam);
+    box-shadow: 0 0 8px var(--oz-beam);
+  }
+  .hdr-nav a:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-color: var(--oz-beam);
   }
 
   .hdr-right {
     margin-left: auto;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-  }
-  .hdr-signin {
-    font-family: var(--font-body);
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--color-bg);
-    background: var(--color-fg);
-    padding: 0.5rem 0.875rem;
-    border-radius: 999px;
-    text-decoration: none;
-    border: 1px solid var(--color-fg);
-    transition: background 0.18s, color 0.18s;
-  }
-  .hdr-signin:hover {
-    background: var(--color-accent);
-    border-color: var(--color-accent);
-    color: #fff;
+    gap: 0.75rem;
   }
 
   .hdr-burger {
     display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
     background: transparent;
-    border: 1px solid var(--color-border);
-    color: var(--color-fg);
+    border: 1px solid var(--oz-line);
     width: 40px;
     height: 40px;
-    border-radius: 8px;
-    font-size: 1.125rem;
+    border-radius: var(--md-shape-sm);
     cursor: pointer;
   }
+  .hdr-burger-bar {
+    width: 16px;
+    height: 2px;
+    background: var(--ink);
+    border-radius: 2px;
+  }
   .hdr-burger:hover {
-    border-color: var(--color-accent);
-    color: var(--color-accent);
+    border-color: var(--oz-beam);
+  }
+  .hdr-burger:hover .hdr-burger-bar {
+    background: var(--oz-beam);
+  }
+  .hdr-burger:focus-visible {
+    outline: 2px solid var(--oz-beam);
+    outline-offset: 2px;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 860px) {
     .hdr-nav {
       display: none;
     }
     .hdr-burger {
       display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .hdr-signin {
-      padding: 0.375rem 0.75rem;
-      font-size: 0.8125rem;
     }
   }
 </style>
 
 <script>
-  /* Burger toggles the chrome Sidebar drawer if one's mounted; otherwise
-     it falls back to anchoring at #sb-toggle (matches BottomBar menu). */
   const btn = document.querySelector<HTMLButtonElement>('[data-hdr-burger]')
   btn?.addEventListener('click', () => {
     const drawer = document.querySelector<HTMLInputElement>('#sb-toggle')
@@ -167,8 +173,6 @@
       btn.setAttribute('aria-expanded', String(drawer.checked))
       return
     }
-    // Fallback: scroll to sidebar anchor.
-    const sb = document.getElementById('sb-toggle')
-    if (sb) sb.scrollIntoView({ behavior: 'smooth' })
+    document.getElementById('sb-toggle')?.scrollIntoView({ behavior: 'smooth' })
   })
 </script>

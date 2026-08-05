@@ -1,5 +1,11 @@
 @import 'tailwindcss';
 
+/* Self-hosted type trio — night-exchange identity (no CDN). */
+@import '@fontsource-variable/space-grotesk';
+@import '@fontsource-variable/instrument-sans';
+@import '@fontsource/space-mono/400.css';
+@import '@fontsource/space-mono/700.css';
+
 /*
  * oriz-home — v2 broadsheet almanac tokens
  *
@@ -21,11 +27,11 @@
 
 @theme {
   --font-display:
-    "Google Sans Display", Roboto, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-sans: "Google Sans Text", Roboto, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    "Space Grotesk Variable", "Space Grotesk", system-ui, -apple-system, sans-serif;
+  --font-sans: "Instrument Sans Variable", "Instrument Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "Space Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --container-spine: 920px;
+  --container-spine: 1080px;
 }
 
 @layer base {

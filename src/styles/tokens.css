@@ -1,134 +1,138 @@
 /*
- * tokens.css — MD3 dark-first palette + type stack (2026-07-08).
+ * tokens.css — oriz.in FRONT DOOR identity (2026-08-05 redesign).
  *
- * Replaces the paper/vermilion v0 brief with Material Design 3 dark tokens.
- * Semantic aliases (--paper, --ink, --rule, etc.) are preserved so all
- * components continue to compile unchanged.
+ * DIRECTION: "night exchange" — the hub is a routing switchboard / departures
+ * board that connects you onward to every sister site. Deep indigo night, not
+ * near-black; a triad of illuminated signal lamps (cyan beam / amber live /
+ * rose line) instead of a single acid accent. Deliberately UNLIKE every child
+ * (all MD3-dark) AND unlike the prior warm-cream+serif front door.
  *
- * Import order: global.css → oriz-ui-overrides.css → astro-shell/tokens.css → THIS FILE
- * (last write wins — MD3 values override everything above)
+ * Type: Space Grotesk (display, tracked), Instrument Sans (body, humanist),
+ * Space Mono (call-signs + board data). None are the reach-for defaults.
+ *
+ * Semantic aliases (--ink/--paper/--rule/--mustard/--vermilion/--md-*) are all
+ * remapped so every shared component + sub-page compiles unchanged.
+ *
+ * Import order: global.css → oriz-ui-overrides.css → THIS FILE (last write wins).
  */
 
-/* ── MD3 reference tokens ─────────────────────────────────────────────── */
 :root {
-  --md-surface:                 #0F0D13;
-  --md-surface-container-low:   #1D1B20;
-  --md-surface-container:       #211F26;
-  --md-surface-container-high:  #2B2930;
-  --md-surface-container-highest: #36343B;
-  --md-primary:                 #D0BCFF;
-  --md-on-primary:                #381E72;
-  --md-primary-container:         #4F378B;
-  --md-on-primary-container:      #EADDFF;
-  --md-secondary:                 #CCC2DC;
-  --md-on-surface:              #E6E1E5;
-  --md-on-surface-variant:      #CAC4D0;
-  --md-outline-variant:         #49454F;
-  --md-outline:                 #938F99;
-  --md-secondary-container:     #4A4458;
-  --md-on-secondary-container:  #E8DEF8;
-  --md-error:                   #F2B8B5;
-  --md-error-container:         #8C1D18;
+  /* ── Night-exchange palette ──────────────────────────────────────────── */
+  --oz-night:      #0B1020;   /* deep indigo — the board field */
+  --oz-night-2:    #10162B;   /* raised panel */
+  --oz-night-3:    #182140;   /* row hover / recessed */
+  --oz-halo:       #EEF1FB;   /* near-white — primary text */
+  --oz-halo-dim:   #9AA3C4;   /* muted text — secondary */
+  --oz-beam:       #5CE1E6;   /* cyan signal beam — primary route */
+  --oz-beam-deep:  #2FB6BC;   /* pressed cyan */
+  --oz-amber:      #FFB454;   /* amber lamp — live / departing */
+  --oz-rose:       #FF6B8B;   /* rose lamp — a distinct line/category */
+  --oz-line:       #26305A;   /* hairline rules on night */
 
-  /* Type scale */
-  --md-font-display: "Google Sans Display", Roboto, system-ui, sans-serif;
-  --md-font-body:    "Google Sans Text", Roboto, system-ui, sans-serif;
-  --md-font-mono:    "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* ── MD3-compat reference tokens (remapped to night-exchange) ────────── */
+  --md-surface:                   var(--oz-night);
+  --md-surface-container-low:     var(--oz-night-2);
+  --md-surface-container:         var(--oz-night-2);
+  --md-surface-container-high:    var(--oz-night-3);
+  --md-surface-container-highest: #1F2A50;
+  --md-primary:                   var(--oz-beam);
+  --md-on-primary:                #04121A;
+  --md-primary-container:         #123138;
+  --md-on-primary-container:      var(--oz-beam);
+  --md-secondary:                 var(--oz-amber);
+  --md-on-surface:                var(--oz-halo);
+  --md-on-surface-variant:        var(--oz-halo-dim);
+  --md-outline-variant:           var(--oz-line);
+  --md-outline:                   #34406E;
+  --md-secondary-container:       #2A2338;
+  --md-on-secondary-container:    var(--oz-amber);
+  --md-error:                     #FF6B8B;
+  --md-error-container:           #3A1A24;
 
-  /* Shape */
+  /* Type scale — installed fontsource families (no CDN). */
+  --md-font-display: "Space Grotesk Variable", "Space Grotesk", system-ui, sans-serif;
+  --md-font-body:    "Instrument Sans Variable", "Instrument Sans", system-ui, -apple-system, sans-serif;
+  --md-font-mono:    "Space Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Shape — soft-tech: rounded panels, not pill, not zero-radius broadsheet. */
   --md-shape-xs:  4px;
-  --md-shape-sm:  8px;
-  --md-shape-md:  12px;
-  --md-shape-lg:  16px;
-  --md-shape-xl:  28px;
+  --md-shape-sm:  6px;
+  --md-shape-md:  10px;
+  --md-shape-lg:  14px;
+  --md-shape-xl:  22px;
   --md-shape-full: 9999px;
 
-  /* ── Semantic aliases (used by all components) ───────────────────────── */
+  /* ── Semantic aliases (used by every shared component) ───────────────── */
+  --color-bg:     var(--oz-night);
+  --paper:        var(--oz-night);
+  --paper-deep:   #070B16;
 
-  /* Background / surface */
-  --color-bg:     var(--md-surface);
-  --paper:        var(--md-surface);
-  --paper-deep:   #080609;           /* OLED-er, prefers-contrast:more */
+  --color-fg:     var(--oz-halo);
+  --ink:          var(--oz-halo);
+  --ink-mute:     var(--oz-halo-dim);
+  --ink-secondary: var(--oz-halo-dim);
 
-  /* Text */
-  --color-fg:     var(--md-on-surface);
-  --ink:          var(--md-on-surface);
-  --ink-mute:     var(--md-on-surface-variant);
+  --color-accent: var(--oz-beam);
+  --mustard:      var(--oz-amber);   /* interactive amber (hover/live) */
+  --vermilion:    var(--oz-beam);    /* signature beam mark */
+  --ledger:       var(--oz-rose);
+  --highlighter:  color-mix(in oklab, var(--oz-beam) 30%, transparent);
 
-  /* Interactive accent — primary fills the old vermilion/mustard role */
-  --color-accent: var(--md-primary);
-  --mustard:      var(--md-primary);
-  --vermilion:    var(--md-primary);
-  --ledger:       var(--md-on-secondary-container);
-  --highlighter:  color-mix(in oklab, var(--md-primary) 30%, transparent);
+  --color-border: var(--oz-line);
+  --rule:         var(--oz-line);
 
-  /* Borders */
-  --color-border: var(--md-outline-variant);
-  --rule:         var(--md-outline-variant);
+  --surface-container:      var(--oz-night-2);
+  --surface-container-high: var(--oz-night-3);
 
-  /* Card / container surfaces */
-  --surface-container:      var(--md-surface-container);
-  --surface-container-high: var(--md-surface-container-high);
-
-  /* Font stack */
   --font-display: var(--md-font-display);
   --font-body:    var(--md-font-body);
   --font-sans:    var(--md-font-body);
   --font-utility: var(--md-font-mono);
   --font-mono:    var(--md-font-mono);
 
-  /* Extra aliases so ALL pages share MD3 dark tokens */
-  --bg:            var(--md-surface);
-  --ink-secondary: var(--md-on-surface-variant);
+  --bg: var(--oz-night);
   color-scheme: dark;
 }
 
-/* Light variant — activated only when user explicitly prefers light */
+/* Light variant — "daytime board": pale slate, same beam triad, kept cool
+   so it never collapses into the banned warm-cream default. */
 @media (prefers-color-scheme: light) {
   :root {
     color-scheme: light;
-    --md-surface:                 #FFFBFE;
-    --md-surface-container-low:   #F7F2FA;
-    --md-surface-container:       #F3EDF7;
-    --md-surface-container-high:  #ECE6F0;
-    --md-primary:                 #6750A4;
-    --md-on-surface:              #1C1B1F;
-    --md-on-surface-variant:      #49454F;
-    --md-outline-variant:         #CAC4D0;
-    --md-outline:                 #79747E;
-    --md-secondary-container:     #E8DEF8;
-    --md-on-secondary-container:  #1D192B;
+    --oz-night:      #EEF1FA;
+    --oz-night-2:    #E4E9F6;
+    --oz-night-3:    #D8DFF1;
+    --oz-halo:       #0B1020;
+    --oz-halo-dim:   #4A5578;
+    --oz-beam:       #0E8F95;
+    --oz-beam-deep:  #0B6E73;
+    --oz-amber:      #B5701A;
+    --oz-rose:       #C63A5A;
+    --oz-line:       #C3CBE2;
 
-    --color-bg:     var(--md-surface);
-    --paper:        var(--md-surface);
-    --paper-deep:   var(--md-surface-container-low);
-    --color-fg:     var(--md-on-surface);
-    --ink:          var(--md-on-surface);
-    --ink-mute:     var(--md-on-surface-variant);
-    --color-accent: var(--md-primary);
-    --mustard:      var(--md-primary);
-    --vermilion:    var(--md-primary);
-    --ledger:       var(--md-on-secondary-container);
-    --color-border: var(--md-outline-variant);
-    --rule:         var(--md-outline-variant);
+    --md-on-primary: #FFFFFF;
+    --md-primary-container: #CFEBEC;
+    --md-on-primary-container: #0B6E73;
+    --paper-deep:    #F6F8FE;
   }
 }
 
-/* OLED-er surface on devices that request higher contrast */
+/* Higher contrast — brighten text, harden rules. */
 @media (prefers-contrast: more) {
   :root {
-    --paper: var(--paper-deep);
+    --ink:  #FFFFFF;
+    --rule: #3E4A80;
   }
 }
 
 /* ── Base styles ─────────────────────────────────────────────────────────── */
 html,
 body {
-  background: var(--md-surface);
-  color: var(--md-on-surface);
+  background: var(--oz-night);
+  color: var(--oz-halo);
   font-family: var(--md-font-body);
 }
 
 a {
-  color: var(--md-primary);
+  color: var(--oz-beam);
 }
