@@ -11,6 +11,12 @@ import Wordmark from '~/components/Wordmark.astro'
 import { FAMILY_SITES } from '~/lib/family'
 import AuthDock from '~/components/AuthDock.tsx'
 
+interface Props {
+  /** When false, suppress the Clerk AuthDock island (one provider per page). */
+  showAuth?: boolean
+}
+const { showAuth = true } = Astro.props
+
 const dockSites = FAMILY_SITES.filter((s) => s.slug !== 'home').map((s) => ({
   slug: s.slug,
   name: s.name,
@@ -27,10 +33,11 @@ const dockSites = FAMILY_SITES.filter((s) => s.slug !== 'home').map((s) => ({
       <a href="/#board-b"><span class="hdr-dot" aria-hidden="true"></span>APIs</a>
       <a href="/#board-c"><span class="hdr-dot" aria-hidden="true"></span>Packages</a>
       <a href="/about/"><span class="hdr-dot" aria-hidden="true"></span>About</a>
+      <a href="/sign-in/"><span class="hdr-dot" aria-hidden="true"></span>Sign in</a>
     </nav>
 
     <div class="hdr-right">
-      <AuthDock client:only="react" sites={dockSites} />
+      {showAuth && <AuthDock client:only="react" sites={dockSites} />}
       <button
         class="hdr-burger"
         type="button"

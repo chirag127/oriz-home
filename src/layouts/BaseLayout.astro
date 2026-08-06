@@ -42,6 +42,11 @@ interface Props {
    * Defaults true. Set false on `/`, legal pages, and auth pages.
    */
   sidebar?: boolean
+  /**
+   * When false, the Header's Clerk AuthDock island is suppressed. Set false on
+   * `/sign-in` so exactly ONE ClerkProvider mounts on that page.
+   */
+  showAuth?: boolean
 }
 
 const {
@@ -53,6 +58,7 @@ const {
   chrome = 'full',
   bodyClass,
   sidebar = true,
+  showAuth = true,
 } = Astro.props
 
 const adsenseClient = import.meta.env.PUBLIC_ADSENSE_CLIENT
@@ -103,7 +109,7 @@ const cfAnalyticsEnabled = import.meta.env.PUBLIC_ENABLE_CF_ANALYTICS === 'true'
     <a href="#main" class="skip-link">Skip to content</a>
     {chrome === 'full' ? (
       <>
-        <Header />
+        <Header showAuth={showAuth} />
         {sidebar ? (
           <div class="layout-body">
             <Sidebar><AppSidebarContent /></Sidebar>

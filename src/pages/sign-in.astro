@@ -1,0 +1,46 @@
+---
+/*
+ * /sign-in — dedicated Clerk sign-in for oriz.in SSO.
+ *
+ * Exactly ONE ClerkProvider on this page: BaseLayout's Header AuthDock is
+ * suppressed via showAuth={false}, so only SignInPanel mounts a provider.
+ * Public content stays ungated everywhere else — this route just hosts the
+ * shared *.oriz.in sign-in surface.
+ */
+import BaseLayout from '~/layouts/BaseLayout.astro'
+import SignInPanel from '~/components/SignInPanel.tsx'
+---
+
+<BaseLayout
+  title="Sign in — oriz"
+  description="Sign in to oriz. One account works across every oriz site."
+  noindex={true}
+  sidebar={false}
+  showAuth={false}
+>
+  <header class="spine page-head">
+    <p class="eyebrow"><a href="/">chirag127</a> / sign in</p>
+    <h1>Sign in</h1>
+    <p class="lede">
+      One account works across every oriz site — sign in once, roam the family.
+      Public content is always free and needs no account.
+    </p>
+  </header>
+
+  <section class="spine signin-wrap">
+    <SignInPanel client:only="react" />
+  </section>
+</BaseLayout>
+
+<style>
+  .signin-wrap {
+    display: flex;
+    justify-content: center;
+    padding-block: 2rem 4rem;
+  }
+  .signin-wrap :global([data-signin-missing]) {
+    color: var(--ink-mute);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+  }
+</style>
