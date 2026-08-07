@@ -20,8 +20,8 @@ test.describe('oriz.in home', () => {
     await page.goto(BASE, { waitUntil: 'networkidle' })
     // the removed bug: a static <a href="/sign-in"> in the nav
     await expect(page.locator('nav a[href="/sign-in/"], nav a[href="/sign-in"]')).toHaveCount(0)
-    // the correct control: the Clerk SignInButton island
-    await expect(page.getByRole('button', { name: /sign in/i })).toBeVisible()
+    // the correct control: the Clerk SignInButton island (client:only — needs hydration time)
+    await expect(page.getByRole('button', { name: /sign in/i })).toBeVisible({ timeout: 15000 })
   })
 
   test('Clerk sign-in modal opens', async ({ page }) => {
