@@ -13,11 +13,13 @@
 import BaseLayout from '~/layouts/BaseLayout.astro'
 import { FAMILY_SITES } from '~/lib/family'
 
-const CAT_ORDER = ['reading', 'tools', 'finance', 'personal'] as const
+const CAT_ORDER = ['tools', 'creative', 'reading', 'finance', 'content', 'personal'] as const
 const CAT_LABELS: Record<(typeof CAT_ORDER)[number], string> = {
-  reading: 'READ + WRITE',
-  tools: 'MAKE + TOOLS',
-  finance: 'TRACK',
+  tools: 'TOOLS',
+  creative: 'CREATIVE + AI',
+  reading: 'READ + LEARN',
+  finance: 'FINANCE + DATA',
+  content: 'CONTENT',
   personal: 'META',
 }
 

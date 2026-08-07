@@ -15,6 +15,7 @@
  * is quiet mono/typeset rows.
  */
 import BaseLayout from '~/layouts/BaseLayout.astro'
+import { FAMILY_SITES } from '~/lib/family'
 
 interface Row {
   callsign: string
@@ -25,23 +26,34 @@ interface Row {
   lamp: 'live' | 'ontime'
 }
 
-const SITES: Row[] = [
-  { callsign: 'PGS', dest: 'blog', host: 'blog.oriz.in', url: 'https://blog.oriz.in', note: "Engineer's notebook — dispatches.", lamp: 'live' },
-  { callsign: 'ME', dest: 'me', host: 'me.oriz.in', url: 'https://me.oriz.in', note: 'Personal portfolio.', lamp: 'live' },
-  { callsign: 'LOR', dest: 'lore', host: 'lore.oriz.in', url: 'https://lore.oriz.in', note: 'Lore — long-form reading.', lamp: 'ontime' },
-  { callsign: 'NCE', dest: 'ncert', host: 'ncert.oriz.in', url: 'https://ncert.oriz.in', note: 'NCERT study notes.', lamp: 'ontime' },
-  { callsign: 'CRD', dest: 'cards', host: 'cards.oriz.in', url: 'https://cards.oriz.in', note: 'Credit/debit card database.', lamp: 'ontime' },
-  { callsign: 'FIN', dest: 'finance', host: 'finance.oriz.in', url: 'https://finance.oriz.in', note: 'India finance calculators.', lamp: 'live' },
-  { callsign: 'LNK', dest: 'links', host: 'links.oriz.in', url: 'https://links.oriz.in', note: 'Curated dev links.', lamp: 'ontime' },
-  { callsign: 'STS', dest: 'status', host: 'status.oriz.in', url: 'https://status.oriz.in', note: 'Services status board.', lamp: 'live' },
-  { callsign: 'KNW', dest: 'knowledge', host: 'knowledge.oriz.in', url: 'https://knowledge.oriz.in', note: 'Knowledge base / second brain.', lamp: 'ontime' },
-  { callsign: 'PLB', dest: 'portfolio-lab', host: 'portfolio-lab.oriz.in', url: 'https://portfolio-lab.oriz.in', note: 'Max-Sharpe portfolio studio.', lamp: 'live' },
-  { callsign: 'ENV', dest: 'envpact', host: 'envpact.oriz.in', url: 'https://envpact.oriz.in', note: 'Sustainability dashboard.', lamp: 'ontime' },
-  { callsign: 'IPO', dest: 'ipo', host: 'ipo.oriz.in', url: 'https://ipo.oriz.in', note: 'IPO grey-market-premium terminal.', lamp: 'live' },
-  { callsign: 'MMI', dest: 'mmi', host: 'mmi.oriz.in', url: 'https://mmi.oriz.in', note: 'Tickertape Market Mood Index.', lamp: 'live' },
-  { callsign: 'NFT', dest: 'nifty', host: 'nifty.oriz.in', url: 'https://nifty.oriz.in', note: 'Nifty buy-timing signal.', lamp: 'live' },
-  { callsign: 'ACC', dest: 'account', host: 'account.oriz.in', url: 'https://account.oriz.in', note: 'Central sign-in / account.', lamp: 'live' },
-]
+/* Live lamps: data/status sites that update in real time. */
+const LIVE = new Set([
+  'blog', 'me', 'finance', 'status', 'portfolio-lab',
+  'ipo', 'mmi', 'nifty', 'account',
+])
+
+const callsignFor = (slug: string) =>
+  slug.replace(/-/g, '').slice(0, 3).toUpperCase()
+
+const toRow = (s: (typeof FAMILY_SITES)[number]): Row => ({
+  callsign: callsignFor(s.slug),
+  dest: s.slug,
+  host: new URL(s.url).host,
+  url: s.url,
+  note: s.tagline,
+  lamp: LIVE.has(s.slug) ? 'live' : 'ontime',
+})
+
+const byCat = (cat: (typeof FAMILY_SITES)[number]['category']) =>
+  FAMILY_SITES.filter((s) => s.category === cat).map(toRow)
+
+const TOOLS = byCat('tools')
+const CREATIVE = byCat('creative')
+/* Content lines: reading + content + personal + hub(excl. home). */
+const CONTENT = FAMILY_SITES.filter(
+  (s) => ['reading', 'content', 'personal', 'hub'].includes(s.category) && s.slug !== 'home',
+).map(toRow)
+const FINANCE = byCat('finance')
 
 const APIS: Row[] = [
   { callsign: 'RTO', dest: 'rto', host: 'api-rto.oriz.in', url: 'https://api-rto.oriz.in', note: 'RTO vehicle registration data.', lamp: 'live' },
@@ -69,12 +81,16 @@ const PKG_SLUGS = [
   'seo', 'rate-limit',
 ]
 
-const totalDest = SITES.length + APIS.length + PKG_SLUGS.length
-const liveNow = [...SITES, ...APIS].filter((r) => r.lamp === 'live').length
+const SITE_TOTAL = TOOLS.length + CREATIVE.length + CONTENT.length + FINANCE.length
+const totalDest = SITE_TOTAL + APIS.length + PKG_SLUGS.length
+const liveNow = [...TOOLS, ...CREATIVE, ...CONTENT, ...FINANCE, ...APIS].filter((r) => r.lamp === 'live').length
 
 const boards: { code: string; line: string; label: string; rows: Row[] }[] = [
-  { code: 'A', line: 'sites', label: 'Sites', rows: SITES },
-  { code: 'B', line: 'apis', label: 'API fleet', rows: APIS },
+  { code: 'A', line: 'tools', label: 'Tools', rows: TOOLS },
+  { code: 'B', line: 'creative', label: 'Creative + AI', rows: CREATIVE },
+  { code: 'C', line: 'content', label: 'Content + reading', rows: CONTENT },
+  { code: 'D', line: 'finance', label: 'Finance + data', rows: FINANCE },
+  { code: 'E', line: 'apis', label: 'API fleet', rows: APIS },
 ]
 ---
 
@@ -136,9 +152,9 @@ const boards: { code: string; line: string; label: string; rows: Row[] }[] = [
       </section>
     ))}
 
-    <section class="board spine" id="board-c" aria-label="Packages">
+    <section class="board spine" id="board-f" aria-label="Packages">
       <header class="board-strip">
-        <span class="bs-line" data-line="packages">Line C</span>
+        <span class="bs-line" data-line="packages">Line F</span>
         <h2 class="bs-label">npm packages</h2>
         <span class="bs-count">@chirag127 · {String(PKG_SLUGS.length).padStart(2, '0')}</span>
       </header>
@@ -339,6 +355,9 @@ const boards: { code: string; line: string; label: string; rows: Row[] }[] = [
     border-radius: var(--md-shape-xs);
   }
   .bs-line[data-line='apis'] { background: var(--oz-amber); }
+  .bs-line[data-line='creative'] { background: var(--oz-rose); }
+  .bs-line[data-line='content'] { background: var(--oz-halo); }
+  .bs-line[data-line='finance'] { background: var(--oz-amber); }
   .bs-line[data-line='packages'] { background: var(--oz-rose); }
   .bs-label {
     font-family: var(--font-display);
