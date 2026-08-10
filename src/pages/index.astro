@@ -110,17 +110,38 @@ const boards: { code: string; line: string; label: string; rows: Row[] }[] = [
         <span class="bh-flap-sub">{liveNow} updating in real time</span>
       </div>
 
-      <h1 class="bh-title">One board. <span class="bh-em">Every</span> destination.</h1>
+      <h1 class="bh-title">Every free tool, app &amp; API — <span class="bh-em">one</span> home.</h1>
       <p class="bh-lede">
-        oriz.in routes onward to a free-forever family — apps, tools, books, live data APIs
-        and open packages. Read the board, pick a line, depart. Nothing here is gated.
+        oriz.in is a free-forever family of fast, private, <strong>100% client-side</strong> web apps,
+        developer tools, live-data APIs, books and open-source packages. No ads. No signup. No tracking.
+        Your data never leaves your browser.
       </p>
 
-      <a class="bh-depart" href="#board-a">
-        <span>Read the board</span>
-        <span class="bh-depart-beam" aria-hidden="true"></span>
-      </a>
+      <div class="bh-ctas">
+        <a class="bh-depart" href="#board-a">
+          <span>Explore the suite</span>
+          <span class="bh-depart-beam" aria-hidden="true"></span>
+        </a>
+        <a class="bh-ghost" href="https://github.com/chirag127" rel="noopener">GitHub ↗</a>
+      </div>
     </header>
+
+    <section class="trust spine" aria-label="At a glance">
+      <ul class="trust-row" role="list">
+        <li><b data-flip data-target={totalDest}>00</b><span>destinations</span></li>
+        <li><b>22</b><span>client-side tools</span></li>
+        <li><b>16</b><span>live-data APIs</span></li>
+        <li><b>17</b><span>npm packages</span></li>
+        <li><b>$0</b><span>no ads · no card</span></li>
+      </ul>
+    </section>
+
+    <section class="pillars spine" aria-label="Why oriz">
+      <div class="pillar"><span class="pl-mark" aria-hidden="true">◈</span><h3>100% client-side</h3><p>Everything runs in your browser — files, data and processing never leave your device.</p></div>
+      <div class="pillar"><span class="pl-mark" aria-hidden="true">◉</span><h3>Free forever</h3><p>No ads, no signup, no card on file. Every tool is fully public and unrestricted.</p></div>
+      <div class="pillar"><span class="pl-mark" aria-hidden="true">◐</span><h3>Open &amp; keyless AI</h3><p>MIT-licensed, and AI features run on free keyless models — no API key required.</p></div>
+      <div class="pillar"><span class="pl-mark" aria-hidden="true">◆</span><h3>One design system</h3><p>Built and run by one operator on shared atomic packages — a unified, installable (PWA) family.</p></div>
+    </section>
 
     {boards.map((b) => (
       <section class="board spine" id={`board-${b.code.toLowerCase()}`} aria-label={b.label}>
@@ -332,6 +353,48 @@ const boards: { code: string; line: string; label: string; rows: Row[] }[] = [
   .bh-depart:hover .bh-depart-beam::after,
   .bh-depart:focus-visible .bh-depart-beam::after { transform: translateX(0); }
   .bh-depart:focus-visible { outline: 2px solid var(--oz-beam); outline-offset: 4px; border-radius: 4px; }
+
+  .bh-ctas { display: flex; gap: 0.9rem; align-items: center; flex-wrap: wrap; }
+  .bh-ghost {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.85rem;
+    color: var(--ink-mute);
+    text-decoration: none;
+    padding: 0.55rem 0.9rem;
+    border: 1px solid var(--oz-line);
+    border-radius: 6px;
+    transition: color 0.18s, border-color 0.18s;
+  }
+  .bh-ghost:hover, .bh-ghost:focus-visible { color: var(--oz-halo); border-color: var(--oz-beam); outline: none; }
+
+  /* ── TRUST STRIP ──────────────────────────────────────────────────── */
+  .trust { padding: 1.5rem 0 0.5rem; }
+  .trust-row {
+    list-style: none; margin: 0; padding: 0;
+    display: flex; flex-wrap: wrap; gap: 1.75rem 2.5rem;
+    border-top: 1px solid var(--oz-line); border-bottom: 1px solid var(--oz-line);
+    padding: 1.25rem 0;
+  }
+  .trust-row li { display: flex; flex-direction: column; gap: 0.15rem; }
+  .trust-row b {
+    font-family: var(--font-mono, monospace); font-size: 1.6rem; font-weight: 700;
+    color: var(--oz-halo); line-height: 1;
+  }
+  .trust-row span { font-size: 0.72rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-mute); }
+
+  /* ── PILLARS ──────────────────────────────────────────────────────── */
+  .pillars {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem; padding: 1.75rem 0 0.5rem;
+  }
+  .pillar {
+    padding: 1.1rem 1.15rem;
+    background: linear-gradient(180deg, var(--oz-night-3, #12161d), var(--oz-night-2, #0e1219));
+    border: 1px solid var(--oz-line); border-radius: 10px;
+  }
+  .pl-mark { color: var(--oz-beam); font-size: 1.15rem; }
+  .pillar h3 { margin: 0.5rem 0 0.35rem; font-size: 0.98rem; color: var(--oz-halo); }
+  .pillar p { margin: 0; font-size: 0.85rem; line-height: 1.5; color: var(--ink-mute); }
 
   /* ── BOARD SECTIONS ───────────────────────────────────────────────── */
   .board { margin-top: clamp(2.5rem, 6vw, 4rem); }
