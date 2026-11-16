@@ -13,8 +13,8 @@ jobs:
     env:
       PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.PUBLIC_CLERK_PUBLISHABLE_KEY }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
       - run: npm install --legacy-peer-deps
@@ -25,7 +25,7 @@ jobs:
           npx astro preview --port 4322 &
           npx wait-on http://localhost:4322 -t 60000
           TEST_BASE_URL=http://localhost:4322 npx playwright test tests/e2e
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: playwright-report
